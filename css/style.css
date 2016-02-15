@@ -1,0 +1,18 @@
+body {
+	margin: 0;
+	background-color: #282c34;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+#player-gui {
+	width: 250px;
+	margin: 0 auto;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#player {
+	display: none;
+}
