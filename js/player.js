@@ -11,14 +11,14 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 const Player = {
 
   YTPlayer: undefined,
+  update: undefined,
 
   /**
    * Gets fired when the YT Player is Loaded
    */
   onReady: function(event) {
-    console.log("Player is ready");
+    console.log("PLAYER IS LOADED");
     let player = event.target;
-    console.log("Starting video...");
     $("#meta-information").text(player.getVideoData().title);
 
     //Display time
@@ -29,7 +29,7 @@ const Player = {
 
     //Add event listeners for the gui
     
-    setInterval(Player.updateTime, 1000);
+    Player.update = setInterval(Player.updateTime, 1000);
     $("#play").on("click", Player.changeVideoState);
   },
 
@@ -107,8 +107,8 @@ const Player = {
   },
 
   loadVideo: function() {
-    console.log("Loading Video");
-    Player.YTPlayer = undefined;
+    console.log("LOADING VIDEO");
+    Player.clearPlayer();
     Player.YTPlayer = new YT.Player('player', {
       height: 1,
       width: 1,
@@ -118,8 +118,27 @@ const Player = {
         'onStateChange': Player.onStateChange
       }
     });
+    console.log("object created");
+  },
+
+  clearPlayer: function() {
+    console.log("CLEARING VIDEO");
+    if(Player.YTPlayer !== undefined && Player.YTPlayer !== null) {
+      Player.YTPlayer.stopVideo();
+      Player.YTPlayer.clearVideo();
+    }
+
+    //Remove Event Listener
+    $("#play").unbind("click");
+
+    //Recreate player div
+    $("#player").replaceWith("<div id='player'></div>");
+
+    clearInterval(Player.update);
+    Player.update = undefined;
+    Player.YTPlayer = undefined;
   }
-}
+};
 
 
 
