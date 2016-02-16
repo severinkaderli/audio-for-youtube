@@ -4,110 +4,120 @@ tag.src = "https://www.youtube.com/iframe_api";
 let firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+
 /**
  * Player Object
  */
-class Player {
-  /**
-   * Creates the yt player
-   */
-  construct(id) {
-    this.player = new YT.Player('player', {
-      height: '1',
-      width: '1',
-      events: {
-        'onReady': this.onReady,
-        'onStateChange': this.onStateChange
-      }
-    });
-  }
+const Player = {
+
+  YTPlayer: undefined,
 
   /**
    * Gets fired when the YT Player is Loaded
    */
-  onReady(event) {
-    $("#meta-information").text(this.player.getVideoData());
+  onReady: function(event) {
+    console.log("Player is ready");
+    let player = event.target;
+    console.log("Starting video...");
+    $("#meta-information").text(player.getVideoData().title);
 
     //Display time
-    let duration = this.formatTime(this.player.getDuration());
+    let duration = Player.formatTime(player.getDuration());
     $('#duration').text(duration);
     $("#time-elapsed").text("00:00");
-    this.play();
+    Player.play();
 
     //Add event listeners for the gui
-    $("#play").on("click", changeVideoState);
-    setInterval(this.updateTime(), 1000);
-  }
+    
+    setInterval(Player.updateTime, 1000);
+    $("#play").on("click", Player.changeVideoState);
+  },
 
   /**
    * Gets called when
    */
-  onStateChange(event) {
-    console.log("State changed");
-    if (event.data == YT.PlayerState.PLAYING) {
+  onStateChange: function(event) {
+    const player = event.target;
 
-    }
-  }
+    console.log("State changed to: ", player.getPlayerState());
+
+  },
 
   /**
    * Switches between playing and pausing
    */
-  changeVideoState() {
-    if(this.player.getPlayerState() == YT.PlayerState.PLAYING) {
-      this.pause();
+  changeVideoState: function() {
+    if(Player.YTPlayer.getPlayerState() == YT.PlayerState.PLAYING) {
+      Player.pause();
     } else {
-      this.play();
+      Player.play();
     }
-  }
+  },
 
   /**
    * Formats the seconds in the style mm:ss
    * @param {number} seconds
    * @return {string} The formatted time as string
    */
-  formatTime(seconds) {
+  formatTime: function(seconds) {
+    seconds = Math.round(seconds);
     let minutes = Math.floor(seconds / 60);
     seconds = seconds - minutes * 60;
-    let time = str_pad_left(minutes,'0',2)+':'+str_pad_left(seconds,'0',2);
+    let time = Player.str_pad_left(minutes,'0',2)+':'+Player.str_pad_left(seconds,'0',2);
     return time;
-  }
+  },
 
   /**
    * This function is used to update the time correctly
    * @return {[type]} [description]
    */
-  updateTime() {
-    let currentTime = this.formatTime(player.getCurrentTime());
+  updateTime: function() {
+    console.log("Updating Time");
+    let currentTime = Player.formatTime(Player.YTPlayer.getCurrentTime());
     $("#time-elapsed").text(currentTime);
-  }
+  },
 
   /**
    * Start/continue playback of video
    */
-  play() {
+  play: function() {
     $("#play .icon").removeClass("fa-play");
     $("#play .icon").addClass("fa-pause");
-    this.player.playVideo();
-  }
+    Player.YTPlayer.playVideo();
+  },
 
   /**
    * Pause the playback of the video
    */
-  pause() {
+  pause: function() {
     $("#play .icon").removeClass("fa-pause");
     $("#play .icon").addClass("fa-play");
-    this.player.pauseVideo();
-  }
+    Player.YTPlayer.pauseVideo();
+  },
 
-  loadId(id) {
-    this.player.loadVideoByid(id);
-  }
+  loadVideoById: function(id) {
+    Player.YTPlayer.loadVideoByid(id);
+  },
 
   /**
    * Used the pad the time correctly
    */
-  str_pad_left(string,pad,length) {
+  str_pad_left: function(string,pad,length) {
     return (new Array(length+1).join(pad)+string).slice(-length);
+  },
+
+  loadVideo: function() {
+    console.log("Loading Video");
+    Player.YTPlayer = undefined;
+    Player.YTPlayer = new YT.Player('player', {
+      height: 1,
+      width: 1,
+      videoId: $("#searchField").val(),
+      events: {
+        'onReady': Player.onReady,
+        'onStateChange': Player.onStateChange
+      }
+    });
   }
 }
 
@@ -116,6 +126,6 @@ class Player {
 //Create the player object if API is ready
 function onYouTubeIframeAPIReady() {
   console.log("API ready");
-  let the_player = new Player('player');
-  the_player.loadId("bHQqvYy5KYo");
+
+  $("#searchButton").on("click", Player.loadVideo);
 }
