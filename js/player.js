@@ -6,6 +6,7 @@ const Player = {
     YTPlayer: undefined,
     updateTimeInterval: undefined,
     updateMetaInterval: undefined,
+    activeKeys : {},
 
     GUI: {
         title: document.getElementById("title"),
@@ -28,6 +29,10 @@ const Player = {
         //if(isPlaylist){}
         Player.GUI.controls.prev.addEventListener('click', Player.playPrevious);
         Player.GUI.controls.next.addEventListener('click', Player.playNext);
+
+        //Add Keyboard Shortcuts
+        window.addEventListener("keydown", Player.keydown, false);
+        window.addEventListener("keyup", Player.keyup, false);
         
         Player.updateTimeInterval = setInterval(Player.updateTime, 500);
         Player.updateMetaInterval = setInterval(Player.displayMeta, 1000);
@@ -42,6 +47,28 @@ const Player = {
     onStateChange: function(event) {
         const player = event.target;
         console.log("State changed to: ", player.getPlayerState());
+    },
+
+    keydown: function(e) {
+        console.log("Keydown Event called");
+
+        if(Player.activeKeys[e.keyCode] == null) {
+           switch(e.keyCode) {
+            case 37:
+                Player.playPrevious();
+                break;
+            case 39:
+                Player.playNext();
+                break;
+            } 
+
+            Player.activeKeys[e.keyCode] = true;
+        }
+        
+    },
+
+    keyup: function(e) {
+        Player.activeKeys[e.keyCode] = null;
     },
 
     /**
