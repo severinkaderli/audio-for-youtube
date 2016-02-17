@@ -8,13 +8,13 @@
 </head>
 <body>
 <!-- Player GUI -->
-<input type="text" placeholder="Video ID" id="searchField">
+<input type="text" placeholder="Video ID" id="search">
 <button id="searchButton">Abspielen</button>
 
 <div id="gui">
 	<div id="title"></div>
 	<div id="controls">
-		<span id="play"><i class="icon fa fa-play"></i></span> <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
+		<span id="play"><i class="icon fa fa-play"></i></span> <span id="time">00:00</span> / <span id="duration">00:00</span>
 	</div>
 </div>
 
@@ -32,7 +32,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 //Create the player object if API is ready
 function onYouTubeIframeAPIReady() {
     console.log("API ready");
-    $("#searchButton").on("click", Player.loadVideo);
+    document.getElementById("searchButton").addEventListener("click", Player.loadVideo);
 }
 </script>
 </body>

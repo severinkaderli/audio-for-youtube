@@ -7,12 +7,13 @@ const Player = {
     update: undefined,
 
     GUI: {
-        title: document.getElementById('title'),
-        currentTime: document.getElementById('currentTime'),
-        duration: document.getElementById('duration'),
+        title: document.getElementById("title"),
+        time: document.getElementById("time"),
+        duration: document.getElementById("duration"),
         controls: {
-            play: document.getElementById('play')
-        }
+            play: document.getElementById("play")
+        },
+        searchField: document.getElementById("search")
     },
 
     /**
@@ -26,7 +27,7 @@ const Player = {
         //Display time
         let duration = Player.formatTime(player.getDuration());
         Player.GUI.duration.innerText = duration;
-        Player.GUI.currentTime.innerText = "00:00";
+        Player.GUI.time.innerText = "00:00";
 
         //Add event listeners for the GUI
         Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
@@ -39,11 +40,10 @@ const Player = {
     },
 
     /**
-     * Gets called when
+     * Gets called when the state of the player gets changed
      */
     onStateChange: function(event) {
         const player = event.target;
-
         console.log("State changed to: ", player.getPlayerState());
     },
 
@@ -52,8 +52,10 @@ const Player = {
      */
     changeVideoState: function() {
         if(Player.YTPlayer.getPlayerState() == YT.PlayerState.PLAYING) {
+            clearInterval(Player.update);
             Player.pause();
         } else {
+            Player.update = setInterval(Player.updateTime, 1000);
             Player.play();
         }
     },
@@ -67,7 +69,7 @@ const Player = {
         seconds = Math.round(seconds);
         let minutes = Math.floor(seconds / 60);
         seconds = seconds - minutes * 60;
-        let time = Player.str_pad_left(minutes, '0', 2) + ':' + Player.str_pad_left(seconds, '0', 2);
+        let time = Player.str_pad_left(minutes, "0", 2) + ':' + Player.str_pad_left(seconds, "0", 2);
         return time;
     },
 
@@ -78,7 +80,7 @@ const Player = {
     updateTime: function() {
         console.log("Updating Time");
         let currentTime = Player.formatTime(Player.YTPlayer.getCurrentTime());
-        $("#time-elapsed").text(currentTime);
+        Player.GUI.time.innerText = currentTime;
     },
 
     /**
@@ -116,7 +118,7 @@ const Player = {
         Player.YTPlayer = new YT.Player('player', {
             height: 1,
             width: 1,
-            videoId: $("#searchField").val(),
+            videoId: Player.GUI.searchField.value,
             events: {
                 'onReady': Player.onReady,
                 'onStateChange': Player.onStateChange
@@ -130,14 +132,13 @@ const Player = {
         if(Player.YTPlayer !== undefined && Player.YTPlayer !== null) {
             Player.YTPlayer.stopVideo();
             Player.YTPlayer.clearVideo();
+            Player.YTPlayer.destroy();
         }
 
         //Remove Event Listener
-        $("#play").unbind("click");
+        Player.GUI.controls.play.removeEventListener("click", Player.changeVideoState);
 
-        //Recreate player div
-        $("#player").replaceWith("<div id='player'></div>");
-
+        //Clear intervals and the YT.Player object
         clearInterval(Player.update);
         Player.update = undefined;
         Player.YTPlayer = undefined;
