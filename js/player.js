@@ -70,13 +70,13 @@ const Player = {
     },
 
     playNext: function() {
-        Player.YTPlayer.playNext();
-        Player.YTPlayer.displayMeta();
+        Player.YTPlayer.nextVideo();
+        Player.displayMeta();
     },
 
     playPrevious: function() {
-        Player.YTPlayer.playPrevious();
-        Player.YTPlayer.displayMeta();
+        Player.YTPlayer.previousVideo();
+        Player.displayMeta();
     },
 
     /**
@@ -100,6 +100,7 @@ const Player = {
         console.log("Updating Time");
         let currentTime = Player.formatTime(Player.YTPlayer.getCurrentTime());
         Player.GUI.time.innerText = currentTime;
+        Player.displayMeta();
     },
 
     /**
