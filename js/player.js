@@ -4,14 +4,17 @@
 const Player = {
 
     YTPlayer: undefined,
-    update: undefined,
+    updateTimeInterval: undefined,
+    updateMetaInterval: undefined,
 
     GUI: {
         title: document.getElementById("title"),
         time: document.getElementById("time"),
         duration: document.getElementById("duration"),
         controls: {
-            play: document.getElementById("play")
+            play: document.getElementById("play"),
+            prev: document.getElementById("prev"),
+            next: document.getElementById("next"),
         },
         searchField: document.getElementById("search")
     },
@@ -20,14 +23,14 @@ const Player = {
      * Gets fired when the YT Player is Loaded
      */
     onReady: function(event) {
-        console.log("PLAYER IS LOADED");
-        //let player = event.target;
-        //let videoUrl = Player.loadByUrl(Player.GUI.searchField.value);
-        //Check if URL is a playlist
 
-        //Player.YTPlayer.loadVideoByUrl("https://www.youtube.com/v/blpl4swRxgQ?version=3");
+        Player.YTPlayer.setShuffle(true);
+        //if(isPlaylist){}
+        Player.GUI.controls.prev.addEventListener('click', Player.playPrevious);
+        Player.GUI.controls.next.addEventListener('click', Player.playNext);
         
-        Player.displayMeta();
+        Player.updateTimeInterval = setInterval(Player.updateTime, 500);
+        Player.updateMetaInterval = setInterval(Player.displayMeta, 1000);
 
         //Start the video
         Player.play();
@@ -66,17 +69,15 @@ const Player = {
         Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
 
         //Initialise updateTime function
-        Player.update = setInterval(Player.updateTime, 1000);
+       // Player.update = setInterval(Player.updateTime, 1000);
     },
 
     playNext: function() {
         Player.YTPlayer.nextVideo();
-        Player.displayMeta();
     },
 
     playPrevious: function() {
         Player.YTPlayer.previousVideo();
-        Player.displayMeta();
     },
 
     /**
@@ -100,7 +101,6 @@ const Player = {
         console.log("Updating Time");
         let currentTime = Player.formatTime(Player.YTPlayer.getCurrentTime());
         Player.GUI.time.innerText = currentTime;
-        Player.displayMeta();
     },
 
     /**
