@@ -118,7 +118,7 @@ const Player = {
         Player.YTPlayer = new YT.Player('player', {
             height: 1,
             width: 1,
-            videoId: Player.GUI.searchField.value,
+            //videoId: Player.GUI.searchField.value,
             events: {
                 'onReady': Player.onReady,
                 'onStateChange': Player.onStateChange
