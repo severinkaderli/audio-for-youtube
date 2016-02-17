@@ -9,11 +9,9 @@ var gulp = require("gulp"),
  */
 gulp.task('js', function () {
     return gulp.src('js/player.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'))
         .pipe(babel())
         .pipe(rename({suffix: '.min'}))
-        //.pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest('js/'));
 });
 

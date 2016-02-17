@@ -11,10 +11,10 @@
 <input type="text" placeholder="Video ID" id="searchField">
 <button id="searchButton">Abspielen</button>
 
-<div id="player-gui">
-	<div id="meta-information"></div>
-	<div id="player-controls">
-		<span id="play"><i class="icon fa fa-play"></i></span> <span id="time-elapsed">00:00</span> / <span id="duration">00:00</span>
+<div id="gui">
+	<div id="title"></div>
+	<div id="controls">
+		<span id="play"><i class="icon fa fa-play"></i></span> <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
 	</div>
 </div>
 
@@ -22,5 +22,18 @@
 <div id="player"></div>
 <script src="./bower_components/jquery/dist/jquery.min.js"></script>
 <script src="./js/player.min.js"></script>
+<script>
+// Insert the JS-API on the site
+let tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+let firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+//Create the player object if API is ready
+function onYouTubeIframeAPIReady() {
+    console.log("API ready");
+    $("#searchButton").on("click", Player.loadVideo);
+}
+</script>
 </body>
 </html>
