@@ -21,11 +21,16 @@ const Player = {
      */
     onReady: function(event) {
         console.log("PLAYER IS LOADED");
-        let player = event.target;
-        Player.GUI.title.innerText = player.getVideoData().title;
+        //let player = event.target;
+        //let videoUrl = Player.loadByUrl(Player.GUI.searchField.value);
+        //Check if URL is a playlist
+
+        //Player.YTPlayer.loadVideoByUrl("https://www.youtube.com/v/blpl4swRxgQ?version=3");
+        
+        Player.GUI.title.innerText = Player.YTPlayer.getVideoData().title;
 
         //Display time
-        let duration = Player.formatTime(player.getDuration());
+        let duration = Player.formatTime(Player.YTPlayer.getDuration());
         Player.GUI.duration.innerText = duration;
         Player.GUI.time.innerText = "00:00";
 
@@ -36,7 +41,7 @@ const Player = {
         Player.update = setInterval(Player.updateTime, 1000);
 
         //Start the video
-        Player.play();   
+        Player.play();
     },
 
     /**
@@ -112,18 +117,25 @@ const Player = {
         return (new Array(length+1).join(pad)+string).slice(-length);
     },
 
+    loadByUrl: function(url) {
+        console.log("Load Video By Url: ", url);
+        Player.YTPlayer.loadVideoByUrl(url);
+        Player.play();
+    },
+
     loadVideo: function() {
         console.log("LOADING VIDEO");
         Player.clearPlayer();
         Player.YTPlayer = new YT.Player('player', {
-            height: 1,
-            width: 1,
-            //videoId: Player.GUI.searchField.value,
+            //height: 1,
+            //width: 1,
+           // videoId: "dQw4w9WgXcQ",
             events: {
                 'onReady': Player.onReady,
                 'onStateChange': Player.onStateChange
             }
         });
+
         console.log("object created");
     },
 
