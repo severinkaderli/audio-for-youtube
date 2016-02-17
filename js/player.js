@@ -27,18 +27,7 @@ const Player = {
 
         //Player.YTPlayer.loadVideoByUrl("https://www.youtube.com/v/blpl4swRxgQ?version=3");
         
-        Player.GUI.title.innerText = Player.YTPlayer.getVideoData().title;
-
-        //Display time
-        let duration = Player.formatTime(Player.YTPlayer.getDuration());
-        Player.GUI.duration.innerText = duration;
-        Player.GUI.time.innerText = "00:00";
-
-        //Add event listeners for the GUI
-        Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
-
-        //Initialise updateTime function
-        Player.update = setInterval(Player.updateTime, 1000);
+        Player.displayMeta();
 
         //Start the video
         Player.play();
@@ -63,6 +52,31 @@ const Player = {
             Player.update = setInterval(Player.updateTime, 1000);
             Player.play();
         }
+    },
+
+    displayMeta: function() {
+        Player.GUI.title.innerText = Player.YTPlayer.getVideoData().title;
+
+        //Display time
+        let duration = Player.formatTime(Player.YTPlayer.getDuration());
+        Player.GUI.duration.innerText = duration;
+        Player.GUI.time.innerText = "00:00";
+
+        //Add event listeners for the GUI
+        Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
+
+        //Initialise updateTime function
+        Player.update = setInterval(Player.updateTime, 1000);
+    },
+
+    playNext: function() {
+        Player.YTPlayer.playNext();
+        Player.YTPlayer.displayMeta();
+    },
+
+    playPrevious: function() {
+        Player.YTPlayer.playPrevious();
+        Player.YTPlayer.displayMeta();
     },
 
     /**
