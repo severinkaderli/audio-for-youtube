@@ -1,6 +1,15 @@
 /**
  * Player Object
  */
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 const Player = {
 
     YTPlayer: undefined,
@@ -95,7 +104,8 @@ const Player = {
         //Show notification
         //var n = new Notification("Playing", {body: title});
         //setTimeout(n.close.bind(n), 5000);
-
+        let progress = Player.YTPlayer.getVideoLoadedFraction();
+        document.getElementById("trackbar").style.width = Math.round(progress) + "%";
 
         //Display time
         let duration = Player.formatTime(Player.YTPlayer.getDuration());
@@ -143,8 +153,7 @@ const Player = {
      * Start/continue playback of video
      */
     play: function() {
-        $("#play .icon").removeClass("fa-play");
-        $("#play .icon").addClass("fa-pause");
+        Player.GUI.controls.play.innerText = "pause_circle_filled";
         Player.YTPlayer.playVideo();
     },
 
@@ -152,8 +161,7 @@ const Player = {
      * Pause the playback of the video
      */
     pause: function() {
-        $("#play .icon").removeClass("fa-pause");
-        $("#play .icon").addClass("fa-play");
+        Player.GUI.controls.play.innerText = "play_circle_filled";
         Player.YTPlayer.pauseVideo();
     },
 
@@ -198,8 +206,33 @@ const Player = {
         //Remove Event Listener
         Player.GUI.controls.play.removeEventListener("click", Player.changeVideoState);
 
+        //Create new player element
+        let body = document.getElementsByTagName("body")[0];
+        let tmp = document.getElementById("player");
+        if(tmp !== undefined && tmp !== null) {
+            
+            console.log(tmp);
+            body.removeChild(document.getElementById("player"));
+        }
+
+        let iframe = document.createElement("iframe");
+        iframe.id = "player";
+        iframe.width = "1";
+        iframe.height = "1";
+
+        //TODO: Get the url from the box and filter out the list parameter
+        let playlistId = getParameterByName("list", Player.GUI.searchField.value);
+        console.log("Playlist URL:", playlistId);
+        iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&enablejsapi=1';
+        console.log(iframe);
+        body.appendChild(iframe);
+        //var player '<iframe id="player" width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=FLxoPKKKHEIIH-1wB1XFcypw&enablejsapi=1" ></iframe>';
+        
+
+
         //Clear intervals and the YT.Player object
-        clearInterval(Player.updateTime);
+        clearInterval(Player.updateTimeInterval);
+        clearInterval(Player.updateMetaInterval);
         Player.updateTime = undefined;
         Player.YTPlayer = undefined;
     }
