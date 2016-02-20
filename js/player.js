@@ -44,6 +44,7 @@ const Player = {
         window.addEventListener("keyup", Player.keyup, false);
         
         Player.updateTimeInterval = setInterval(Player.updateTime, 500);
+        console.log("Interval created");
         Player.updateMetaInterval = setInterval(Player.displayMeta, 1000);
 
         //Start the video
@@ -91,7 +92,7 @@ const Player = {
             clearInterval(Player.updateTimeInterval);
             Player.pause();
         } else {
-            Player.updateTimeInterval = setInterval(Player.updateTime, 1000);
+            Player.updateTimeInterval = setInterval(Player.updateTime, 500);
             Player.play();
         }
     },
@@ -101,16 +102,16 @@ const Player = {
         Player.GUI.title.innerText = title;
         document.getElementsByTagName('title')[0].innerText = title;
 
-        //Show notification
-        //var n = new Notification("Playing", {body: title});
-        //setTimeout(n.close.bind(n), 5000);
-        let progress = Player.YTPlayer.getVideoLoadedFraction();
-        document.getElementById("trackbar").style.width = Math.round(progress) + "%";
 
         //Display time
-        let duration = Player.formatTime(Player.YTPlayer.getDuration());
-        Player.GUI.duration.innerText = duration;
-        console.log("Duration", duration);
+        let duration = Player.YTPlayer.getDuration();
+        Player.GUI.duration.innerText = Player.formatTime(duration);
+        let currentTime = Player.YTPlayer.getCurrentTime();
+        let progress = currentTime / duration;
+        console.log("Progress:", progress);
+        document.getElementById("trackbar").style.width = progress*100 + "%";
+
+        
         //Player.GUI.time.innerText = "00:00";
 
         //Add event listeners for the GUI
@@ -233,7 +234,6 @@ const Player = {
         //Clear intervals and the YT.Player object
         clearInterval(Player.updateTimeInterval);
         clearInterval(Player.updateMetaInterval);
-        Player.updateTime = undefined;
         Player.YTPlayer = undefined;
     }
 };
