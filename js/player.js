@@ -50,8 +50,12 @@ const Player = {
         console.log("Interval created");
         Player.updateMetaInterval = setInterval(Player.displayMeta, 1000);
 
-        //Start the video
-        Player.play();
+        // Start the video
+        // TODO: On mobile devices we can't start the player this way, the user
+        // needs to initiate the player. I need to figure how to deactivate
+        // the autoplay on mobile devices, so the play button doesn't turn
+        // into a pause one. Till then I deactivate autostart alltogether.     
+        // Player.play();
     },
 
     /**
