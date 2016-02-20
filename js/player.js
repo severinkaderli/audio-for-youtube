@@ -26,7 +26,7 @@ const Player = {
             prev: document.getElementById("prev"),
             next: document.getElementById("next"),
         },
-        searchField: document.getElementById("search")
+        searchField: document.getElementById("searchField")
     },
 
     /**
@@ -35,7 +35,10 @@ const Player = {
     onReady: function(event) {
 
         Player.YTPlayer.setShuffle(true);
-        //if(isPlaylist){}
+        Player.YTPlayer.unMute();
+        Player.YTPlayer.setVolume(100);
+
+
         Player.GUI.controls.prev.addEventListener('click', Player.playPrevious);
         Player.GUI.controls.next.addEventListener('click', Player.playNext);
 
@@ -102,18 +105,6 @@ const Player = {
         Player.GUI.title.innerText = title;
         document.getElementsByTagName('title')[0].innerText = title;
 
-
-        //Display time
-        let duration = Player.YTPlayer.getDuration();
-        Player.GUI.duration.innerText = Player.formatTime(duration);
-        let currentTime = Player.YTPlayer.getCurrentTime();
-        let progress = currentTime / duration;
-        console.log("Progress:", progress);
-        document.getElementById("trackbar").style.width = progress*100 + "%";
-
-        
-        //Player.GUI.time.innerText = "00:00";
-
         //Add event listeners for the GUI
         Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
 
@@ -145,9 +136,14 @@ const Player = {
      * @return {[type]} [description]
      */
     updateTime: function() {
-        console.log("Updating Time");
-        let currentTime = Player.formatTime(Player.YTPlayer.getCurrentTime());
-        Player.GUI.time.innerText = currentTime;
+
+        let currentTime = Player.YTPlayer.getCurrentTime();
+        Player.GUI.time.innerText = Player.formatTime(currentTime);
+        let duration = Player.YTPlayer.getDuration();
+        Player.GUI.duration.innerText = Player.formatTime(duration);
+        let progress = currentTime / duration;
+        console.log("Progress:", progress);
+        document.getElementById("trackbar").style.width = progress*100 + "%";
     },
 
     /**

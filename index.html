@@ -2,7 +2,8 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Player</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>Audio for YouTube</title>
 	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
@@ -10,8 +11,10 @@
 </head>
 <body>
 <!-- Player GUI -->
-<input type="text" placeholder="Video ID" id="search">
-<button id="searchButton">Abspielen</button>
+<div id="search">
+	<input type="text" placeholder="Please enter a playlist URL" id="searchField" autofocus>
+	<button id="searchButton"><i class="material-icons">search</i></button>
+</div>
 
 <div id="gui">
 	<div id="title">&nbsp;</div>
