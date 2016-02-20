@@ -10,7 +10,7 @@ const Player = {
 
     GUI: {
         title: document.getElementById("title"),
-        time: document.getElementById("time"),
+        time: document.getElementById("currentTime"),
         duration: document.getElementById("duration"),
         controls: {
             play: document.getElementById("play"),
@@ -50,7 +50,7 @@ const Player = {
     },
 
     keydown: function(e) {
-        console.log("Keydown Event called");
+        console.log("Keydown Event called:", e.keyCode);
 
         if(Player.activeKeys[e.keyCode] == null) {
            switch(e.keyCode) {
@@ -59,6 +59,9 @@ const Player = {
                 break;
             case 39:
                 Player.playNext();
+                break;
+            case 32:
+                Player.changeVideoState();
                 break;
             } 
 
@@ -76,27 +79,33 @@ const Player = {
      */
     changeVideoState: function() {
         if(Player.YTPlayer.getPlayerState() == YT.PlayerState.PLAYING) {
-            clearInterval(Player.update);
+            clearInterval(Player.updateTimeInterval);
             Player.pause();
         } else {
-            Player.update = setInterval(Player.updateTime, 1000);
+            Player.updateTimeInterval = setInterval(Player.updateTime, 1000);
             Player.play();
         }
     },
 
     displayMeta: function() {
-        Player.GUI.title.innerText = Player.YTPlayer.getVideoData().title;
+        let title = Player.YTPlayer.getVideoData().title;
+        Player.GUI.title.innerText = title;
+        document.getElementsByTagName('title')[0].innerText = title;
+
+        //Show notification
+        //var n = new Notification("Playing", {body: title});
+        //setTimeout(n.close.bind(n), 5000);
+
 
         //Display time
         let duration = Player.formatTime(Player.YTPlayer.getDuration());
         Player.GUI.duration.innerText = duration;
-        Player.GUI.time.innerText = "00:00";
+        console.log("Duration", duration);
+        //Player.GUI.time.innerText = "00:00";
 
         //Add event listeners for the GUI
         Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
 
-        //Initialise updateTime function
-       // Player.update = setInterval(Player.updateTime, 1000);
     },
 
     playNext: function() {
@@ -169,9 +178,6 @@ const Player = {
         console.log("LOADING VIDEO");
         Player.clearPlayer();
         Player.YTPlayer = new YT.Player('player', {
-            //height: 1,
-            //width: 1,
-           // videoId: "dQw4w9WgXcQ",
             events: {
                 'onReady': Player.onReady,
                 'onStateChange': Player.onStateChange
@@ -193,8 +199,8 @@ const Player = {
         Player.GUI.controls.play.removeEventListener("click", Player.changeVideoState);
 
         //Clear intervals and the YT.Player object
-        clearInterval(Player.update);
-        Player.update = undefined;
+        clearInterval(Player.updateTime);
+        Player.updateTime = undefined;
         Player.YTPlayer = undefined;
     }
 };

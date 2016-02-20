@@ -3,7 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<title>Player</title>
-	<link rel="stylesheet" type="text/css" href="./bower_components/font-awesome/css/font-awesome.min.css">
+	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 <body>
@@ -12,14 +14,16 @@
 <button id="searchButton">Abspielen</button>
 
 <div id="gui">
-	<div id="title"></div>
+	<div id="title">&nbsp;</div>
+	<div id="time">
+		<span id="currentTime">00:00</span> / <span id="duration">00:00</span>
+	</div>
 	<div id="controls">
 
-		<span id="prev"><i class="icon fa fa-backward"></i></span>
-		<span id="play"><i class="icon fa fa-play"></i></span>
-		<span id="next"><i class="icon fa fa-forward"></i></span>
-
-		<span id="time">00:00</span> / <span id="duration">00:00</span>
+		<span id="prev"><i class="material-icons">skip_previous</i></span>
+		<span id="play"><i class="material-icons">play_circle_filled</i></span>
+		<span id="next"><i class="material-icons">skip_next</i></span>
+		
 	</div>
 </div>
 
@@ -32,6 +36,7 @@
 <script src="./js/player.min.js"></script>
 <script>
 // Insert the JS-API on the site
+Notification.requestPermission();
 let tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 let firstScriptTag = document.getElementsByTagName('script')[0];

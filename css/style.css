@@ -1,18 +1,62 @@
+/**
+ * https://www.google.com/design/spec/style/color.html#color-themes
+ */
 body {
 	margin: 0;
-	background-color: #282c34;
+	font-family: "Roboto", sans-serif;
+	background-color: #303030;
 	color: rgba(255, 255, 255, 0.5);
 }
 
 #gui {
-	width: 250px;
-	margin: 0 auto;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	padding: 10px;
+	background: #424242;
+	color: #FFF;
+
+	  border-radius: 2px;
+	  display: block;
+	  margin: 0 auto;
+	  position: relative;
+	  width: 300px;
+	box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+
+}
+
+#time {
+	text-align: center;
 }
 
 #player {
 	display: none;
 }
+
+#controls {
+	text-align: center;
+}
+
+#controls > span {
+	cursor: pointer;
+}
+
+#play .material-icons {
+	font-size: 50px;
+}
+
+
+#prev {
+	float: left;
+}
+
+#prev > .material-icons {
+	font-size: 40px;
+}
+
+#next {
+	float: right;
+	
+}
+
+#next > .material-icons {
+	font-size: 40px;
+}
+
