@@ -3,3 +3,7 @@ JavaScript YouTube-Audioplayer for the web using ES2015 and the YouTube iFrame-A
 
 A working version can be found on: 
 [dev.severinkaderli.ch/player](https://dev.severinkaderli.ch/player)
+
+##TODO
+* Bug fixes regarding shuffling and looping. (setTimeout)
+* Creating better Logs
