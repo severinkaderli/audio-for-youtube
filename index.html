@@ -8,13 +8,19 @@
 	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="./css/style.css">
+	<link rel="stylesheet" type="text/css" href="./css/styles.css">
 </head>
 <body>
 <!-- Player GUI -->
 <div id="search">
 	<input type="text" placeholder="Please enter a playlist URL" id="searchField" autofocus>
 	<button id="searchButton"><i class="material-icons">search</i></button>
+</div>
+
+<div id="preloader">
+	<svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+    </svg>
 </div>
 
 <div id="gui">

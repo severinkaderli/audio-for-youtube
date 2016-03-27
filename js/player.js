@@ -18,6 +18,7 @@ const Player = {
     activeKeys : {},
 
     GUI: {
+        gui: document.getElementById("gui"),
         title: document.getElementById("title"),
         time: document.getElementById("currentTime"),
         duration: document.getElementById("duration"),
@@ -26,7 +27,8 @@ const Player = {
             prev: document.getElementById("prev"),
             next: document.getElementById("next"),
         },
-        searchField: document.getElementById("searchField")
+        searchField: document.getElementById("searchField"),
+        preloader: document.getElementById("preloader")
     },
 
     /**
@@ -34,10 +36,13 @@ const Player = {
      */
     onReady: function(event) {
 
+        //Remove preloader
+        Player.GUI.preloader.style.display = "none";
+        Player.GUI.gui.style.display = "block";
+
         Player.YTPlayer.setShuffle(true);
         Player.YTPlayer.unMute();
         Player.YTPlayer.setVolume(100);
-
 
         Player.GUI.controls.prev.addEventListener('click', Player.playPrevious);
         Player.GUI.controls.next.addEventListener('click', Player.playNext);
@@ -47,10 +52,8 @@ const Player = {
         window.addEventListener("keyup", Player.keyup, false);
         
         Player.updateTimeInterval = setInterval(Player.updateTime, 500);
-        console.log("Interval created");
-        Player.updateMetaInterval = setInterval(Player.displayMeta, 1000);
+        Player.updateMetaInterval = setInterval(Player.displayMeta, 500);
 
-        // Start the video
         // TODO: On mobile devices we can't start the player this way, the user
         // needs to initiate the player. I need to figure how to deactivate
         // the autoplay on mobile devices, so the play button doesn't turn
@@ -62,12 +65,10 @@ const Player = {
      * Gets called when the state of the player gets changed
      */
     onStateChange: function(event) {
-        const player = event.target;
-        console.log("State changed to: ", player.getPlayerState());
+        const state = event.target.getPlayerState();
     },
 
     keydown: function(e) {
-        console.log("Keydown Event called:", e.keyCode);
 
         if(Player.activeKeys[e.keyCode] == null) {
            switch(e.keyCode) {
@@ -111,7 +112,6 @@ const Player = {
 
         //Add event listeners for the GUI
         Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
-
     },
 
     playNext: function() {
@@ -146,7 +146,6 @@ const Player = {
         let duration = Player.YTPlayer.getDuration();
         Player.GUI.duration.innerText = Player.formatTime(duration);
         let progress = currentTime / duration;
-        console.log("Progress:", progress);
         document.getElementById("trackbar").style.width = progress*100 + "%";
     },
 
@@ -178,13 +177,12 @@ const Player = {
     },
 
     loadByUrl: function(url) {
-        console.log("Load Video By Url: ", url);
+        console.log("This should get printed to the console...");
         Player.YTPlayer.loadVideoByUrl(url);
         Player.play();
     },
 
     loadVideo: function() {
-        console.log("LOADING VIDEO");
         Player.clearPlayer();
         Player.YTPlayer = new YT.Player('player', {
             events: {
@@ -192,18 +190,19 @@ const Player = {
                 'onStateChange': Player.onStateChange
             }
         });
-
-        console.log("object created");
     },
 
     clearPlayer: function() {
-        console.log("CLEARING VIDEO");
         if(Player.YTPlayer !== undefined && Player.YTPlayer !== null) {
+            Player.pause();
             Player.YTPlayer.stopVideo();
             Player.YTPlayer.clearVideo();
             Player.YTPlayer.destroy();
         }
 
+        Player.GUI.gui.style.display = "none";
+        Player.GUI.preloader.style.display = "block";
+        
         //Remove Event Listener
         Player.GUI.controls.play.removeEventListener("click", Player.changeVideoState);
 
@@ -211,8 +210,6 @@ const Player = {
         let body = document.getElementsByTagName("body")[0];
         let tmp = document.getElementById("player");
         if(tmp !== undefined && tmp !== null) {
-            
-            console.log(tmp);
             body.removeChild(document.getElementById("player"));
         }
 
@@ -223,13 +220,9 @@ const Player = {
 
         //TODO: Get the url from the box and filter out the list parameter
         let playlistId = getParameterByName("list", Player.GUI.searchField.value);
-        console.log("Playlist URL:", playlistId);
         iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&enablejsapi=1';
-        console.log(iframe);
         body.appendChild(iframe);
         //var player '<iframe id="player" width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=FLxoPKKKHEIIH-1wB1XFcypw&enablejsapi=1" ></iframe>';
-        
-
 
         //Clear intervals and the YT.Player object
         clearInterval(Player.updateTimeInterval);
