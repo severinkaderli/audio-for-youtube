@@ -69,12 +69,15 @@ const Player = {
         const state = event.target.getPlayerState();
     },
     keydown: function(e) {
+        console.log(e.keyCode);
         if (Player.activeKeys[e.keyCode] == null) {
             switch (e.keyCode) {
                 case 37:
+                case 74:
                     Player.playPrevious();
                     break;
                 case 39:
+                case 75:
                     Player.playNext();
                     break;
                 case 32:
