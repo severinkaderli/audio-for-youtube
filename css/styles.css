@@ -64,8 +64,23 @@ body {
     margin-bottom: 10px;
 }
 
-#time {
-    text-align: center;
+
+#volume-btn:hover + #volumeSlider {
+	width: auto;
+}
+
+
+
+/**
+ * Volume-Slider
+ */
+#volumeSlider {
+	width: 0;
+	transition: width .5s;
+}
+
+#volumeSlider:hover #volumeSlider {
+	display: inline-block;
 }
 
 #trackbar {
@@ -80,12 +95,18 @@ body {
     -moz-user-select: none;
 }
 
+
+
 #player {
     display: none;
 }
 
+#time {
+	cursor: normal;
+}
+
 #controls {
-    text-align: center;
+    text-align: left;
     height: 50px;
     line-height: 50px;
     white-space: nowrap;
@@ -95,8 +116,9 @@ body {
     -moz-user-select: none;
 }
 
-#controls > i {
+#controls > * {
     cursor: pointer;
+    display: inline-block;
     vertical-align: middle;
 }
 
@@ -105,12 +127,10 @@ body {
 }
 
 #prev {
-    float: left;
     font-size: 40px;
 }
 
 #next {
-    float: right;
     font-size: 40px;
 }
 
