@@ -24,6 +24,7 @@ const Player = {
             play: document.getElementById("play"),
             prev: document.getElementById("prev"),
             next: document.getElementById("next"),
+            volumeSlider: document.getElementById("volumeSlider")
         },
         searchField: document.getElementById("searchField"),
         preloader: document.getElementById("preloader")
@@ -48,6 +49,7 @@ const Player = {
         Player.GUI.gui.style.display = "block";
         Player.GUI.controls.prev.addEventListener('click', Player.playPrevious);
         Player.GUI.controls.next.addEventListener('click', Player.playNext);
+        Player.GUI.controls.volumeSlider.addEventListener('input', Player.updateVolume);
 
         //Add Keyboard Shortcuts
         window.addEventListener("keydown", Player.keydown, false);
@@ -108,6 +110,10 @@ const Player = {
         document.getElementsByTagName('title')[0].innerText = title;
         //Add event listeners for the GUI
         Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
+    },
+
+    updateVolume: function(e) {
+        Player.YTPlayer.setVolume(e.target.value);
     },
     playNext: function() {
         Player.YTPlayer.nextVideo();
