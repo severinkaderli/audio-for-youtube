@@ -14,6 +14,7 @@ const Player = {
     YTPlayer: undefined,
     updateTimeInterval: undefined,
     updateMetaInterval: undefined,
+    videoHasEnded: false,
     activeKeys: {},
     GUI: {
         gui: document.getElementById("gui"),
@@ -69,6 +70,23 @@ const Player = {
      */
     onStateChange: function(event) {
         const state = event.target.getPlayerState();
+
+        if(state == YT.PlayerState.ENDED) {
+            Player.videoHasEnded = true;
+        }
+        console.log(Player.YTPlayer);
+        if(Player.videoHasEnded && (state == YT.PlayerState.PLAYING)) {
+
+            const videoId = getParameterByName("v", Player.YTPlayer.getVideoId());
+            const notification = new Notification(Player.YTPlayer.getVideoData().title, {
+                img: "https://i1.ytimg.com/vi/" + videoId + "/hqdefault.jpg"
+            });
+            setTimeout(function() {
+                notification.close()
+            }, 5000);
+            Player.videoHasEnded = false;
+        }
+        
     },
     keydown: function(e) {
         console.log(e.keyCode);
@@ -117,9 +135,11 @@ const Player = {
     },
     playNext: function() {
         Player.YTPlayer.nextVideo();
+        Player.play();
     },
     playPrevious: function() {
         Player.YTPlayer.previousVideo();
+        Player.play();
     },
     /**
      * Formats the seconds in the style mm:ss
