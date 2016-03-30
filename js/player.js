@@ -74,12 +74,12 @@ const Player = {
         if(state == YT.PlayerState.ENDED) {
             Player.videoHasEnded = true;
         }
-        console.log(Player.YTPlayer);
-        if(Player.videoHasEnded && (state == YT.PlayerState.PLAYING)) {
 
-            const videoId = getParameterByName("v", Player.YTPlayer.getVideoId());
+        if(Player.videoHasEnded && (state == YT.PlayerState.PLAYING)) {
+            const videoId = getParameterByName("v", Player.YTPlayer.getVideoUrl());
+            console.log(videoId);
             const notification = new Notification(Player.YTPlayer.getVideoData().title, {
-                img: "https://i1.ytimg.com/vi/" + videoId + "/hqdefault.jpg"
+                icon: "https://i1.ytimg.com/vi/" + videoId + "/hqdefault.jpg"
             });
             setTimeout(function() {
                 notification.close()
