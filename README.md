@@ -6,3 +6,4 @@ A working version can be found on:
 
 ##TODO
 * Notifications
+* GUI adjustments
