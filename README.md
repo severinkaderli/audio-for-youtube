@@ -5,5 +5,4 @@ A working version can be found on:
 [dev.severinkaderli.ch/player](https://dev.severinkaderli.ch/player)
 
 ##TODO
-* Notifications
 * GUI adjustments
