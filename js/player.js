@@ -1,15 +1,6 @@
 /**
  * Player Object
  */
-function getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
 const Player = {
     YTPlayer: undefined,
     updateTimeInterval: undefined,
@@ -31,28 +22,32 @@ const Player = {
         preloader: document.getElementById("preloader")
     },
     /**
-     * Gets fired when the YT Player is Loaded
+     * Gets fired when the YTPlayer has finished loading
      */
-    onReady: function(event) {
+    onReady: function() {
 
         Player.YTPlayer.unMute();
         Player.YTPlayer.setVolume(100);
 
-        // The timeout is needed to set the shuffle correctly this is a bug
+        // The timeout is needed to set the shuffle correctly. This is a bug
         // in the YouTube iFrame-API.
         setTimeout(function() {
             Player.YTPlayer.setShuffle(true);
             Player.YTPlayer.setLoop(true);
         }, 2000);
 
-        //Remove preloader
+        // Remove preloader
+        // Using classes .hide/.show for this
         Player.GUI.preloader.style.display = "none";
         Player.GUI.gui.style.display = "block";
+
+        // Add event listeners for the GUI
+        Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
         Player.GUI.controls.prev.addEventListener('click', Player.playPrevious);
         Player.GUI.controls.next.addEventListener('click', Player.playNext);
         Player.GUI.controls.volumeSlider.addEventListener('input', Player.updateVolume);
 
-        //Add Keyboard Shortcuts
+        // Add keyboard listener
         window.addEventListener("keydown", Player.keydown, false);
         window.addEventListener("keyup", Player.keyup, false);
         Player.updateTimeInterval = setInterval(Player.updateTime, 500);
@@ -76,7 +71,7 @@ const Player = {
         }
 
         if(Player.videoHasEnded && (state == YT.PlayerState.PLAYING)) {
-            const videoId = getParameterByName("v", Player.YTPlayer.getVideoUrl());
+            const videoId = Player.getParameterByName("v", Player.YTPlayer.getVideoUrl());
             console.log(videoId);
             const notification = new Notification(Player.YTPlayer.getVideoData().title, {
                 icon: "https://i1.ytimg.com/vi/" + videoId + "/hqdefault.jpg"
@@ -126,8 +121,7 @@ const Player = {
         let title = Player.YTPlayer.getVideoData().title;
         Player.GUI.title.innerText = title;
         document.getElementsByTagName('title')[0].innerText = title;
-        //Add event listeners for the GUI
-        Player.GUI.controls.play.addEventListener("click", Player.changeVideoState);
+        
     },
 
     updateVolume: function(e) {
@@ -141,18 +135,7 @@ const Player = {
         Player.YTPlayer.previousVideo();
         Player.play();
     },
-    /**
-     * Formats the seconds in the style mm:ss
-     * @param {number} seconds
-     * @return {string} The formatted time as string
-     */
-    formatTime: function(seconds) {
-        seconds = Math.round(seconds);
-        let minutes = Math.floor(seconds / 60);
-        seconds = seconds - minutes * 60;
-        let time = Player.str_pad_left(minutes, "0", 2) + ':' + Player.str_pad_left(seconds, "0", 2);
-        return time;
-    },
+    
     /**
      * This function is used to update the time correctly
      * @return {[type]} [description]
@@ -182,17 +165,7 @@ const Player = {
     loadVideoById: function(id) {
         Player.YTPlayer.loadVideoByid(id);
     },
-    /**
-     * Used the pad the time correctly
-     */
-    str_pad_left: function(string, pad, length) {
-        return (new Array(length + 1).join(pad) + string).slice(-length);
-    },
-    loadByUrl: function(url) {
-        console.log("This should get printed to the console...");
-        Player.YTPlayer.loadVideoByUrl(url);
-        Player.play();
-    },
+    
     loadVideo: function() {
         Player.clearPlayer();
         Player.YTPlayer = new YT.Player('player', {
@@ -202,35 +175,98 @@ const Player = {
             }
         });
     },
+    /**
+     * Clears the player, removes the YTPlayer object and clear
+     * intervals.
+     * 
+     * @return {void}
+     */
     clearPlayer: function() {
+        // Clearing intervals
+        clearInterval(Player.updateTimeInterval);
+        clearInterval(Player.updateMetaInterval);
+
+        // Removing event listener
+        Player.GUI.controls.play.removeEventListener("click", Player.changeVideoState);
+        Player.GUI.controls.prev.removeEventListener('click', Player.playPrevious);
+        Player.GUI.controls.next.removeEventListener('click', Player.playNext);
+        Player.GUI.controls.volumeSlider.removeEventListener('input', Player.updateVolume);
+
+        // If a YTPlayer exists stop the video and destroy the player.
         if (Player.YTPlayer !== undefined && Player.YTPlayer !== null) {
             Player.pause();
-            Player.YTPlayer.stopVideo();
-            Player.YTPlayer.clearVideo();
-            Player.YTPlayer.destroy();
+            Player.YTPlayer.stopVideo().clearVideo().destroy();
+            Player.YTPlayer = undefined;
         }
+
+        // Hide the gui and show the preloader.
+        // TODO: Using classes for this .hide/.show
         Player.GUI.gui.style.display = "none";
         Player.GUI.preloader.style.display = "block";
-        //Remove Event Listener
-        Player.GUI.controls.play.removeEventListener("click", Player.changeVideoState);
-        //Create new player element
+
+        // Resetting the progress bar
+        document.getElementById("trackbar").style.width = 0;
+
+        
+
+        // Removing keyboard listener
+        window.addEventListener("keydown", Player.keydown, false);
+        window.addEventListener("keyup", Player.keyup, false);
+
+        
+
+        // Create new player element
         let body = document.getElementsByTagName("body")[0];
         let tmp = document.getElementById("player");
         if (tmp !== undefined && tmp !== null) {
             body.removeChild(document.getElementById("player"));
         }
-        let iframe = document.createElement("iframe");
+        const iframe = document.createElement("iframe");
         iframe.id = "player";
         iframe.width = "1";
         iframe.height = "1";
-        //TODO: Get the url from the box and filter out the list parameter
-        let playlistId = getParameterByName("list", Player.GUI.searchField.value);
+        let playlistId = Player.getParameterByName("list", Player.GUI.searchField.value);
+        //Check if playlist id is valid
+        if(playlistId == null) {
+            console.log("Bad id");
+        }
         iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&enablejsapi=1';
-        body.appendChild(iframe);
-        //var player '<iframe id="player" width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=FLxoPKKKHEIIH-1wB1XFcypw&enablejsapi=1" ></iframe>';
-        //Clear intervals and the YT.Player object
-        clearInterval(Player.updateTimeInterval);
-        clearInterval(Player.updateMetaInterval);
-        Player.YTPlayer = undefined;
+        body.appendChild(iframe);  
+    },
+    /**
+     * Pad a string to the wanted size.
+     * @param  {[type]} string [description]
+     * @param  {[type]} pad    [description]
+     * @param  {[type]} length [description]
+     * @return {[type]}        [description]
+     */
+    str_pad_left: function(string, pad, length) {
+        return (new Array(length + 1).join(pad) + string).slice(-length);
+    },
+    /**
+     * Formats the seconds in the style mm:ss
+     * @param {number} seconds
+     * @return {string} The formatted time as string
+     */
+    formatTime: function(seconds) {
+        seconds = Math.floor(seconds);
+        let minutes = Math.floor(seconds / 60);
+        seconds = seconds - minutes * 60;
+        return Player.str_pad_left(minutes, "0", 2) + ':' + Player.str_pad_left(seconds, "0", 2);
+    },
+    /**
+     * Gets the value of a specific parameter from an url.
+     * 
+     * @param  {string} name
+     * @param  {string} url  
+     * @return {string} The value of the parameter.      
+     */
+    getParameterByName: function(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, "\\$&");
+        const results = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)").exec(url);
+        if (!results || !results[2]) {
+            return null;
+        }
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 };
