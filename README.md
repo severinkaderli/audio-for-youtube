@@ -6,3 +6,5 @@ A working version can be found on:
 
 ##TODO
 * Volume Slider
+* Settings (Notifications, Thumbnail etc...) using LocalStorage
+* List of keyboard shortcuts
