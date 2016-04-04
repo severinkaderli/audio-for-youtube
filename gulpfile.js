@@ -8,7 +8,7 @@ var gulp = require("gulp"),
  * JSHint, transpiling, uglifying and adding .min.js suffix
  */
 gulp.task('js', function () {
-    return gulp.src('js/player.js')
+    return gulp.src('js/app.js')
         .pipe(babel())
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())

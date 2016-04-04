@@ -322,3 +322,19 @@ const Player = {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 };
+
+/**
+ * Gets called when the iFrame-Api is ready.
+ * 
+ * @return {void}
+ */
+function onYouTubeIframeAPIReady() {
+    document.getElementById("search-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        Player.loadPlayer();
+        return false;
+    });
+}
+
+// Request permission for notifications.
+Notification.requestPermission();
