@@ -43,8 +43,7 @@
 
 <div id="error"></div>
 
-
-
+<script src="./bower_components/isMobile/isMobile.min.js"></script>
 <script src="./js/player.min.js"></script>
 <script>
 // Insert the JS-API on the site
@@ -57,11 +56,9 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 //Create the player object if API is ready
 function onYouTubeIframeAPIReady() {
     console.log("API ready");
-    //document.getElementById("searchButton").addEventListener("click", Player.loadPlayer);
     document.getElementById("search-form").addEventListener("submit", function(event) {
     	event.preventDefault();
     	Player.loadPlayer();
-    	console.log("submitiing");
     	return false;
     });
 }

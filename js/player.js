@@ -92,7 +92,7 @@ const Player = {
             Player.showError("Please enter a correct playlist URL.");
             return false;
         }
-        iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&enablejsapi=1';
+        iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&autoplay=1&enablejsapi=1';
         body.appendChild(iframe);
         return true; 
     },
@@ -114,7 +114,6 @@ const Player = {
         }, 2000);
 
         // Remove preloader
-        // Using classes .hide/.show for this
         Player.hidePreloader();
         Player.showGUI();
 
@@ -132,12 +131,10 @@ const Player = {
         Player.updateTimeInterval = setInterval(Player.updateTime, 500);
         Player.updateMetaInterval = setInterval(Player.displayMeta, 500);
 
-        // TODO: On mobile devices we can't start the player this way, the user
-        // needs to initiate the player. I need to figure how to deactivate
-        // the autoplay on mobile devices, so the play button doesn't turn
-        // into a pause one. Till then I deactivate autostart alltogether.   
-        // Solution: Play a sound on click on the search button  
-        // Player.play();
+        // Don't autoplay the music on mobile devices, because it's blocked
+        if(!isMobile.any) {
+            Player.play(); 
+        }
     },
     /**
      * Gets fired when an error occurs.
