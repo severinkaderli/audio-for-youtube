@@ -13,17 +13,19 @@
 <body>
 <!-- Player GUI -->
 <div id="search">
-	<input type="text" placeholder="Please enter a playlist URL" id="searchField" autofocus>
-	<button id="searchButton"><i class="material-icons">search</i></button>
+	<form id="search-form">
+		<input type="text" placeholder="Please enter a playlist URL" id="searchField" autofocus>
+		<button href="#" type="submit" id="searchButton"><i class="material-icons">search</i></button>
+	</form>
 </div>
 
-<div id="preloader">
+<div id="preloader" class="hide">
 	<svg class="circular" viewBox="25 25 50 50">
       <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
     </svg>
 </div>
 
-<div id="gui">
+<div id="gui" class="hide">
 	<div id="title">&nbsp;</div>
 	
 	<div id="trackbar"></div>
@@ -39,14 +41,10 @@
 	</div>
 </div>
 
-<div id="error-box">fdasfsd</div>
-
-<!-- Actual Player -->
-<!--<div id="player"></div>-->
-<!--<iframe id="player" type="text/html" width="560" height="315" src="https://www.youtube.com/embed/XMCYNH1EJTg?enablejsapi=1" frameborder="0" allowfullscreen></iframe>-->
+<div id="error"></div>
 
 
-<script src="./bower_components/jquery/dist/jquery.min.js"></script>
+
 <script src="./js/player.min.js"></script>
 <script>
 // Insert the JS-API on the site
@@ -59,7 +57,13 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 //Create the player object if API is ready
 function onYouTubeIframeAPIReady() {
     console.log("API ready");
-    document.getElementById("searchButton").addEventListener("click", Player.loadPlayer);
+    //document.getElementById("searchButton").addEventListener("click", Player.loadPlayer);
+    document.getElementById("search-form").addEventListener("submit", function(event) {
+    	event.preventDefault();
+    	Player.loadPlayer();
+    	console.log("submitiing");
+    	return false;
+    });
 }
 </script>
 </body>
