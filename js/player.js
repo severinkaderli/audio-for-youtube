@@ -19,7 +19,77 @@ const Player = {
             volumeSlider: document.getElementById("volumeSlider")
         },
         searchField: document.getElementById("searchField"),
-        preloader: document.getElementById("preloader")
+        preloader: document.getElementById("preloader"),
+        errrorBox: document.getElementById("error-box")
+    },
+    /**
+     * Creates a new YTPlayer object.
+     * @return {void}
+     */
+    loadPlayer: function() {
+        Player.clearPlayer();
+        Player.YTPlayer = new YT.Player('player', {
+            events: {
+                'onReady': Player.onReady,
+                'onError': Player.onError,
+                'onStateChange': Player.onStateChange
+            }
+        });
+    },
+    /**
+     * Clears the player, removes the YTPlayer object and clear
+     * intervals.
+     * 
+     * @return {void}
+     */
+    clearPlayer: function() {
+        // Clearing intervals
+        clearInterval(Player.updateTimeInterval);
+        clearInterval(Player.updateMetaInterval);
+
+        // Removing event listener
+        Player.GUI.controls.play.removeEventListener("click", Player.changeVideoState);
+        Player.GUI.controls.prev.removeEventListener('click', Player.playPrevious);
+        Player.GUI.controls.next.removeEventListener('click', Player.playNext);
+        Player.GUI.controls.volumeSlider.removeEventListener('input', Player.updateVolume);
+
+        // If a YTPlayer exists stop the video and destroy the player.
+        if (Player.YTPlayer !== undefined && Player.YTPlayer !== null) {
+            Player.pause();
+            Player.YTPlayer.stopVideo().clearVideo().destroy();
+            Player.YTPlayer = undefined;
+        }
+
+        // Hide the gui and show the preloader.
+        // TODO: Using classes for this .hide/.show
+        Player.GUI.gui.
+        Player.GUI.gui.style.display = "none";
+        Player.GUI.preloader.style.display = "block";
+
+        // Resetting the progress bar
+        document.getElementById("trackbar").style.width = 0;
+
+        // Removing keyboard listener
+        window.addEventListener("keydown", Player.keydown, false);
+        window.addEventListener("keyup", Player.keyup, false);
+
+        // Create new player element
+        let body = document.getElementsByTagName("body")[0];
+        let tmp = document.getElementById("player");
+        if (tmp !== undefined && tmp !== null) {
+            body.removeChild(document.getElementById("player"));
+        }
+        const iframe = document.createElement("iframe");
+        iframe.id = "player";
+        iframe.width = "1";
+        iframe.height = "1";
+        let playlistId = Player.getParameterByName("list", Player.GUI.searchField.value);
+        //Check if playlist id is valid
+        if(playlistId == null) {
+            Player.showError("Please enter a correct playlist URL.");
+        }
+        iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&enablejsapi=1';
+        body.appendChild(iframe);  
     },
     /**
      * Gets fired when the YTPlayer has finished loading
@@ -59,7 +129,10 @@ const Player = {
         // into a pause one. Till then I deactivate autostart alltogether.     
         // Player.play();
     },
-
+    onError: function(event) {
+        const errorCode = event.data;
+        console.log(errorCode);
+    },
     /**
      * Gets called when the state of the player gets changed
      */
@@ -135,6 +208,9 @@ const Player = {
         Player.YTPlayer.previousVideo();
         Player.play();
     },
+    showError: function(error) {
+
+    };
     
     /**
      * This function is used to update the time correctly
@@ -165,80 +241,12 @@ const Player = {
     loadVideoById: function(id) {
         Player.YTPlayer.loadVideoByid(id);
     },
-    
-    loadVideo: function() {
-        Player.clearPlayer();
-        Player.YTPlayer = new YT.Player('player', {
-            events: {
-                'onReady': Player.onReady,
-                'onStateChange': Player.onStateChange
-            }
-        });
-    },
-    /**
-     * Clears the player, removes the YTPlayer object and clear
-     * intervals.
-     * 
-     * @return {void}
-     */
-    clearPlayer: function() {
-        // Clearing intervals
-        clearInterval(Player.updateTimeInterval);
-        clearInterval(Player.updateMetaInterval);
-
-        // Removing event listener
-        Player.GUI.controls.play.removeEventListener("click", Player.changeVideoState);
-        Player.GUI.controls.prev.removeEventListener('click', Player.playPrevious);
-        Player.GUI.controls.next.removeEventListener('click', Player.playNext);
-        Player.GUI.controls.volumeSlider.removeEventListener('input', Player.updateVolume);
-
-        // If a YTPlayer exists stop the video and destroy the player.
-        if (Player.YTPlayer !== undefined && Player.YTPlayer !== null) {
-            Player.pause();
-            Player.YTPlayer.stopVideo().clearVideo().destroy();
-            Player.YTPlayer = undefined;
-        }
-
-        // Hide the gui and show the preloader.
-        // TODO: Using classes for this .hide/.show
-        Player.GUI.gui.style.display = "none";
-        Player.GUI.preloader.style.display = "block";
-
-        // Resetting the progress bar
-        document.getElementById("trackbar").style.width = 0;
-
-        
-
-        // Removing keyboard listener
-        window.addEventListener("keydown", Player.keydown, false);
-        window.addEventListener("keyup", Player.keyup, false);
-
-        
-
-        // Create new player element
-        let body = document.getElementsByTagName("body")[0];
-        let tmp = document.getElementById("player");
-        if (tmp !== undefined && tmp !== null) {
-            body.removeChild(document.getElementById("player"));
-        }
-        const iframe = document.createElement("iframe");
-        iframe.id = "player";
-        iframe.width = "1";
-        iframe.height = "1";
-        let playlistId = Player.getParameterByName("list", Player.GUI.searchField.value);
-        //Check if playlist id is valid
-        if(playlistId == null) {
-            console.log("Bad id");
-        }
-        iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&enablejsapi=1';
-        body.appendChild(iframe);  
-    },
     /**
      * Pad a string to the wanted size.
-     * @param  {[type]} string [description]
-     * @param  {[type]} pad    [description]
-     * @param  {[type]} length [description]
-     * @return {[type]}        [description]
+     * @param  {string} string
+     * @param  {string} pad
+     * @param  {number} length
+     * @return {string}
      */
     str_pad_left: function(string, pad, length) {
         return (new Array(length + 1).join(pad) + string).slice(-length);

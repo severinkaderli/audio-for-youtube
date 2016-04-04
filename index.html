@@ -39,6 +39,8 @@
 	</div>
 </div>
 
+<div id="error-box">fdasfsd</div>
+
 <!-- Actual Player -->
 <!--<div id="player"></div>-->
 <!--<iframe id="player" type="text/html" width="560" height="315" src="https://www.youtube.com/embed/XMCYNH1EJTg?enablejsapi=1" frameborder="0" allowfullscreen></iframe>-->
@@ -57,7 +59,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 //Create the player object if API is ready
 function onYouTubeIframeAPIReady() {
     console.log("API ready");
-    document.getElementById("searchButton").addEventListener("click", Player.loadVideo);
+    document.getElementById("searchButton").addEventListener("click", Player.loadPlayer);
 }
 </script>
 </body>
