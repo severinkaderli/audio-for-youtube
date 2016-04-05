@@ -2,16 +2,48 @@
  * Player Object
  */
 const Player = {
+    /**
+     * Instance of the YTPlayer object.
+     * 
+     * @type {object}
+     */
     YTPlayer: undefined,
+    /**
+     * Function for updating the time.
+     * 
+     * @type {function}
+     */
     updateTimeInterval: undefined,
+    /**
+     * Function for updating the meta-informationen in the GUI.
+     * 
+     * @type {function}
+     */
     updateMetaInterval: undefined,
+    /**
+     * Set to true if a video has ended.
+     * 
+     * @type {boolean}
+     */
     videoHasEnded: false,
+    /**
+     * Keeps track of currently active keys.
+     * 
+     * @type {object}
+     */
     activeKeys: {},
+    /**
+     * DOM-Elements for the GUI.
+     * 
+     * @type {object}
+     */
     elements: {
         gui: document.getElementById("gui"),
         title: document.getElementById("title"),
+        siteTitle: document.getElementsByTagName('title')[0],
         time: document.getElementById("currentTime"),
         duration: document.getElementById("duration"),
+        progress: document.getElementById("progress"),
         controls: {
             play: document.getElementById("play"),
             prev: document.getElementById("prev"),
@@ -36,12 +68,11 @@ const Player = {
                     'onStateChange': Player.onStateChange
                 }
             }); 
-        }
-       
+        } 
     },
     /**
-     * Clears the player, removes the YTPlayer object and clear
-     * intervals.
+     * Clears intervals, removes event-listener, and clears the YTPlayer
+     * object.
      * 
      * @return {boolean} - False on error, true otherwise.
      */
@@ -56,6 +87,10 @@ const Player = {
         Player.elements.controls.next.removeEventListener('click', Player.playNext);
         Player.elements.controls.volumeSlider.removeEventListener('input', Player.updateVolume);
 
+        // Removing keyboard listener
+        window.addEventListener("keydown", Player.keydown, false);
+        window.addEventListener("keyup", Player.keyup, false);
+
         // If a YTPlayer exists stop the video and destroy the player.
         if (Player.YTPlayer !== undefined && Player.YTPlayer !== null) {
             Player.pause();
@@ -64,36 +99,35 @@ const Player = {
         }
 
         // Hide the gui and show the preloader.
-        // TODO: Using classes for this .hide/.show
         Player.hideGUI();
         Player.hideError();
         Player.showPreloader();
 
         // Resetting the progress bar
-        document.getElementById("trackbar").style.width = 0;
+        Player.elements.progress.style.width = 0;
 
-        // Removing keyboard listener
-        window.addEventListener("keydown", Player.keydown, false);
-        window.addEventListener("keyup", Player.keyup, false);
-
-        // Create new player element
-        let body = document.getElementsByTagName("body")[0];
-        let tmp = document.getElementById("player");
-        if (tmp !== undefined && tmp !== null) {
-            body.removeChild(document.getElementById("player"));
+        // Remove old player object if one exist.
+        const body = document.getElementsByTagName("body")[0];
+        let oldPlayer = document.getElementById("player");
+        if (oldPlayer !== undefined && oldPlayer !== null) {
+            body.removeChild(oldPlayer);
         }
+
+        // Create new iframe-element.
         const iframe = document.createElement("iframe");
         iframe.id = "player";
-        iframe.width = "1";
-        iframe.height = "1";
-        let playlistId = Player.getParameterByName("list", Player.elements.searchField.value);
-        //Check if playlist id is valid
+        
+        // Check if playlist id is valid
+        const playlistId = Player.getParameterByName("list", Player.elements.searchField.value);
         if(playlistId == null) {
             Player.showError("Please enter a correct playlist URL.");
             return false;
         }
+
+        // Add the iframe to the DOM.
         iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&autoplay=1&enablejsapi=1';
         body.appendChild(iframe);
+
         return true; 
     },
     /**
@@ -103,6 +137,8 @@ const Player = {
      */
     onReady: function() {
 
+        // In case the user muted his YouTube-Player we unmute it and turn
+        // the volume up.
         Player.YTPlayer.unMute();
         Player.YTPlayer.setVolume(100);
 
@@ -113,7 +149,7 @@ const Player = {
             Player.YTPlayer.setLoop(true);
         }, 2000);
 
-        // Remove preloader
+        // Remove preloader and show the GUI.
         Player.hidePreloader();
         Player.showGUI();
 
@@ -129,15 +165,17 @@ const Player = {
 
         // Creating intervals
         Player.updateTimeInterval = setInterval(Player.updateTime, 500);
-        Player.updateMetaInterval = setInterval(Player.displayMeta, 500);
+        Player.updateMetaInterval = setInterval(Player.updateMeta, 500);
 
         // Don't autoplay the music on mobile devices, because it's blocked
+        // by default on most mobile devices.
         if(!isMobile.any) {
             Player.play(); 
         }
     },
     /**
      * Gets fired when an error occurs.
+     * 
      * @param  {object} event - The event object
      * @return {void}
      */
@@ -148,43 +186,134 @@ const Player = {
             case 150:
                 Player.showError("This playlist is private or doesn't exist.");
         }
-        console.error("Errorcode: " + errorCode);
+        console.error("The YouTube Player returned an Error-Code: " + errorCode);
     },
     /**
-     * Gets called when the state of the player gets changed
+     * Gets called when the state of the player gets changed.
+     * 
+     * @param  {object} event - The event object
+     * @return {void}
      */
     onStateChange: function(event) {
         const state = event.target.getPlayerState();
 
+        // Set videoHasEnded to true if a video has finished playing.
         if(state == YT.PlayerState.ENDED) {
             Player.videoHasEnded = true;
         }
 
+        // If a video has ended and a new one starts playing, display a
+        // notification.
         if(Player.videoHasEnded && (state == YT.PlayerState.PLAYING)) {
+            // TODO: Only show notifications if the setting is set.
+            // Fetch the video thumbnail and display the notification
             const videoId = Player.getParameterByName("v", Player.YTPlayer.getVideoUrl());
             const notification = new Notification(Player.YTPlayer.getVideoData().title, {
                 icon: "https://i1.ytimg.com/vi/" + videoId + "/hqdefault.jpg"
             });
+
+            // Close the notification automatically after 5 seconds
             setTimeout(function() {
                 notification.close()
             }, 5000);
+
             Player.videoHasEnded = false;
         }
         
     },
-    showGUI: function() {
-        Player.elements.gui.classList.remove("hide");
-    },
-    hideGUI: function() {
-        Player.elements.gui.classList.add("hide");
-    },
+    /**
+     * Display the preloader.
+     * 
+     * @return {void}
+     */
     showPreloader: function() {
         Player.elements.preloader.classList.remove("hide");
     },
+    /**
+     * Hide the preloader.
+     * 
+     * @return {void}
+     */
     hidePreloader: function() {
         Player.elements.preloader.classList.add("hide");
     },
+    /**
+     * Display the GUI.
+     * 
+     * @return {void}
+     */
+    showGUI: function() {
+        Player.elements.gui.classList.remove("hide");
+    },
+    /**
+     * Hide the GUI.
+     * 
+     * @return {void}
+     */
+    hideGUI: function() {
+        Player.elements.gui.classList.add("hide");
+    },
+    /**
+     * Display an error message.
+     * 
+     * @param  {string} message - The error message that should be displayed.
+     * @return {void}
+     */
+    showError: function(message) {
+        Player.hideGUI();
+        Player.hidePreloader();
+        Player.elements.error.innerHTML = "Error: " + message;
+        Player.elements.error.classList.add("show");
+    },
+    /**
+     * Hide the current error message.
+     * 
+     * @return {void}
+     */
+    hideError: function() {
+        Player.elements.error.classList.remove("show");
+        Player.elements.error.innerHTML = "";
+    },
+    /**
+     * This function is used to update the time and the progress bar
+     * correctly.
+     * 
+     * @return {void}
+     */
+    updateTime: function() {
+        // Update the current time
+        const currentTime = Player.YTPlayer.getCurrentTime();
+        Player.elements.time.innerText = Player.formatTime(currentTime);
+
+        //Update the duration
+        const duration = Player.YTPlayer.getDuration();
+        Player.elements.duration.innerText = Player.formatTime(duration);
+
+        //Update the progressbar
+        const progress = currentTime / duration;
+        Player.elements.progress.style.width = progress * 100 + "%";
+    },
+    /**
+     * Update the meta-information of videos.
+     * 
+     * @return {void}
+     */
+    updateMeta: function() {
+        // Update the GUI title and the site title with the name of the
+        // video.
+        const title = Player.YTPlayer.getVideoData().title;
+        Player.elements.title.innerText = title;
+        Player.elements.siteTitle.innerText = title;
+    },
+    /**
+     * Gets called on the keydown event.
+     * 
+     * @param  {object} event - The event object
+     * @return {void}
+     */
     keydown: function(event) {
+        // Only execute the keycommand when to key is not active. This is
+        // to prevent spamming of keys.
         if (Player.activeKeys[event.keyCode] == null) {
             switch (event.keyCode) {
                 case 37:
@@ -202,88 +331,76 @@ const Player = {
             Player.activeKeys[event.keyCode] = true;
         }
     },
+    /**
+     * Gets called on the keyup event.
+     * 
+     * @param  {object} event - The event object
+     * @return {void}
+     */
     keyup: function(event) {
+        // Remove the key from the active keys object.
         Player.activeKeys[event.keyCode] = null;
     },
     /**
-     * Switches between playing and pausing
+     * Pause/Play the video depending on its state.
+     * 
+     * @return {void}
      */
     changeVideoState: function() {
         if (Player.YTPlayer.getPlayerState() == YT.PlayerState.PLAYING) {
             clearInterval(Player.updateTimeInterval);
+            clearInterval(Player.updateMetaInterval);
             Player.pause();
         } else {
             Player.updateTimeInterval = setInterval(Player.updateTime, 500);
+            Player.updateMetaInterval = setInterval(Player.updateMeta, 500);
             Player.play();
         }
     },
-    displayMeta: function() {
-        let title = Player.YTPlayer.getVideoData().title;
-        Player.elements.title.innerText = title;
-        document.getElementsByTagName('title')[0].innerText = title;
-        
-    },
-
-    updateVolume: function(event) {
-        Player.YTPlayer.setVolume(event.target.value);
-    },
-    playNext: function() {
-        Player.YTPlayer.nextVideo();
-        Player.play();
-    },
+    /**
+     * Starts the previous video of the playlist.
+     * 
+     * @return {void}
+     */
     playPrevious: function() {
         Player.YTPlayer.previousVideo();
         Player.play();
     },
     /**
-     * Display a error message.
+     * Starts the next video of the playlist.
      * 
-     * @param  {string} message - The error message that should be displayed.
      * @return {void}
      */
-    showError: function(message) {
-        Player.hideGUI();
-        Player.hidePreloader();
-        Player.elements.error.innerHTML = "Error: " + message;
-        Player.elements.error.classList.add("show");
+    playNext: function() {
+        Player.YTPlayer.nextVideo();
+        Player.play();
     },
     /**
-     * Hide the current error message.
+     * Gets called when the volume is updated.
+     * 
+     * @param  {object} event - The event object.
      * @return {void}
      */
-    hideError: function() {
-        Player.elements.error.classList.remove("show");
-        Player.elements.error.innerHTML = "";
-    },
-    
-    /**
-     * This function is used to update the time correctly
-     * @return {[type]} [description]
-     */
-    updateTime: function() {
-        let currentTime = Player.YTPlayer.getCurrentTime();
-        Player.elements.time.innerText = Player.formatTime(currentTime);
-        let duration = Player.YTPlayer.getDuration();
-        Player.elements.duration.innerText = Player.formatTime(duration);
-        let progress = currentTime / duration;
-        document.getElementById("trackbar").style.width = progress * 100 + "%";
+    updateVolume: function(event) {
+        Player.YTPlayer.setVolume(event.target.value);
     },
     /**
-     * Start/continue playback of video
+     * Play the video.
+     * 
+     * @return {void}
      */
     play: function() {
         Player.elements.controls.play.innerText = "pause_circle_filled";
         Player.YTPlayer.playVideo();
     },
     /**
-     * Pause the playback of the video
+     * Pause the video.
+     * 
+     * @return {void}
      */
     pause: function() {
         Player.elements.controls.play.innerText = "play_circle_filled";
         Player.YTPlayer.pauseVideo();
-    },
-    loadVideoById: function(id) {
-        Player.YTPlayer.loadVideoByid(id);
     },
     /**
      * Pad a string to the wanted size.
