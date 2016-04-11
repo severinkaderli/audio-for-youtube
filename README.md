@@ -6,5 +6,5 @@ The current dev version can be tested on:
 
 ##TODO
 * Working volume Slider in GUI.
-* Settings (Notifications, Thumbnail etc...) using LocalStorage
+* Settings (Notifications, Thumbnail etc...)
 * List of keyboard shortcuts
