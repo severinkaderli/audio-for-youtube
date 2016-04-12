@@ -8,6 +8,7 @@
 	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./bower_components/material-design-lite/material.min.css">
 	<link rel="stylesheet" type="text/css" href="./css/styles.css">
 </head>
 <body>
@@ -27,8 +28,9 @@
 
 <div id="gui" class="hide">
 	<div id="title">&nbsp;</div>
-	
-	<div id="progress"></div>
+	<p id="progress-container">
+		<input type="range" id="progress" class="mdl-slider mdl-js-slider" value="0" min="0" max="1000">
+	</p>
 	<div id="controls">
 		<i id="prev" class="material-icons">skip_previous</i>
 		<i id="play" class="material-icons">play_circle_filled</i>
@@ -44,6 +46,7 @@
 <div id="error"></div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
+<script src="./bower_components/material-design-lite/material.min.js"></script>
 <script src="./bower_components/isMobile/isMobile.min.js"></script>
 <script src="./js/app.min.js"></script>
 </body>

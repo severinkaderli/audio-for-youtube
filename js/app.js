@@ -103,9 +103,6 @@ const Player = {
         Player.hideError();
         Player.showPreloader();
 
-        // Resetting the progress bar
-        Player.elements.progress.style.width = 0;
-
         // Remove old player object if one exist.
         const body = document.getElementsByTagName("body")[0];
         let oldPlayer = document.getElementById("player");
@@ -291,7 +288,7 @@ const Player = {
 
         //Update the progressbar
         const progress = currentTime / duration;
-        Player.elements.progress.style.width = progress * 100 + "%";
+        Player.elements.progress.MaterialSlider.change(progress * 1000);
     },
     /**
      * Update the meta-information of videos.
