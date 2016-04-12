@@ -1,10 +1,10 @@
 # audio-for-youtube
-JavaScript YouTube-Audioplayer for the web using ES2015 and the YouTube iFrame-API.
+JavaScript YouTube-Audioplayer for the web using ES6 and the YouTube iFrame-API.
 
-A working version can be found on: 
+The current dev version can be tested on: 
 [dev.severinkaderli.ch/player](https://dev.severinkaderli.ch/player)
 
 ##TODO
-* Volume Slider
-* Settings (Notifications, Thumbnail etc...) using LocalStorage
+* Working volume Slider in GUI.
+* Settings (Notifications, Thumbnail etc...)
 * List of keyboard shortcuts
