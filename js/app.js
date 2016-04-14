@@ -33,6 +33,11 @@ const Player = {
      */
     activeKeys: {},
     /**
+     * The last set volume. This is used for unmuting.
+     * @type {Number}
+     */
+    lastVolume: 100,
+    /**
      * DOM-Elements for the GUI.
      * 
      * @type {object}
@@ -48,6 +53,7 @@ const Player = {
             play: document.getElementById("play"),
             prev: document.getElementById("prev"),
             next: document.getElementById("next"),
+            volumeBtn: document.getElementById("volume-btn"),
             volumeSlider: document.getElementById("volumeSlider")
         },
         searchField: document.getElementById("searchField"),
@@ -85,6 +91,7 @@ const Player = {
         Player.elements.controls.play.removeEventListener("click", Player.changeVideoState);
         Player.elements.controls.prev.removeEventListener('click', Player.playPrevious);
         Player.elements.controls.next.removeEventListener('click', Player.playNext);
+        Player.elements.controls.volumeBtn.removeEventListener('click', Player.changeMuteState);
         Player.elements.controls.volumeSlider.removeEventListener('input', Player.updateVolume);
 
         // Removing keyboard listener
@@ -136,8 +143,8 @@ const Player = {
 
         // In case the user muted his YouTube-Player we unmute it and turn
         // the volume up.
-        Player.YTPlayer.unMute();
-        Player.YTPlayer.setVolume(100);
+        Player.unMute();
+        Player.setVolume(100);
 
         // The timeout is needed to set the shuffle correctly. This is a bug
         // in the YouTube iFrame-API.
@@ -154,6 +161,7 @@ const Player = {
         Player.elements.controls.play.addEventListener("click", Player.changeVideoState);
         Player.elements.controls.prev.addEventListener('click', Player.playPrevious);
         Player.elements.controls.next.addEventListener('click', Player.playNext);
+        Player.elements.controls.volumeBtn.addEventListener('click', Player.changeMuteState);
         Player.elements.controls.volumeSlider.addEventListener('input', Player.updateVolume);
 
         // Add keyboard listener
@@ -164,11 +172,9 @@ const Player = {
         Player.updateTimeInterval = setInterval(Player.updateTime, 500);
         Player.updateMetaInterval = setInterval(Player.updateMeta, 500);
 
-        // Don't autoplay the music on mobile devices, because it's blocked
-        // by default on most mobile devices.
-        if(!isMobile.any) {
-            Player.play(); 
-        }
+        // TODO: Try to play the video. If it can't be played it should be
+        // stopped again.
+        Player.play(); 
     },
     /**
      * Gets fired when an error occurs.
@@ -215,8 +221,7 @@ const Player = {
             }, 5000);
 
             Player.videoHasEnded = false;
-        }
-        
+        }   
     },
     /**
      * Display the preloader.
@@ -288,7 +293,7 @@ const Player = {
 
         //Update the progressbar
         const progress = currentTime / duration;
-        Player.elements.progress.MaterialSlider.change(progress * 1000);
+        Player.elements.progress.value = progress * 1000;
     },
     /**
      * Update the meta-information of videos.
@@ -372,6 +377,7 @@ const Player = {
         Player.YTPlayer.nextVideo();
         Player.play();
     },
+
     /**
      * Gets called when the volume is updated.
      * 
@@ -379,7 +385,59 @@ const Player = {
      * @return {void}
      */
     updateVolume: function(event) {
-        Player.YTPlayer.setVolume(event.target.value);
+        // Keep track of the last volume
+        Player.lastVolume = event.target.value;
+        Player.unMute(false);
+        Player.setVolume(event.target.value);
+    },
+    /**
+     * Sets the volume of the player
+     *
+     * @param {number} volume - The new volume value.
+     * @return {void}
+     */
+    setVolume: function(volume) {
+        Player.YTPlayer.setVolume(volume);
+        Player.elements.controls.volumeSlider.value = volume;
+    },
+    /**
+     * Switch between mute and unmute.
+     * 
+     * @param  {object} event - The event object.
+     * @return {void}
+     */
+    changeMuteState: function(event) {
+        if(Player.YTPlayer.isMuted()) {
+            Player.unMute();
+        } else {
+            Player.mute();
+        }
+    },
+    /**
+     * Mutes the player.
+     *
+     * @param {boolean} setVolume - Sets the volume to 0 if true.
+     * @return {void}
+     */
+    mute: function(setVolume = true) {
+        Player.elements.controls.volumeBtn.innerText = "volume_mute";
+        Player.YTPlayer.mute();
+        if(setVolume) {
+            Player.setVolume(0);  
+        }  
+    },
+    /**
+     * Unmutes the player
+     *
+     * @param {boolean} setVolume - Sets the volume to the last value if true.
+     * @return {void}
+     */
+    unMute: function(setVolume = true) {
+        Player.elements.controls.volumeBtn.innerText = "volume_up";
+        Player.YTPlayer.unMute();
+        if(setVolume) {
+           Player.setVolume(Player.lastVolume); 
+        }   
     },
     /**
      * Play the video.

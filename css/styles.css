@@ -67,23 +67,10 @@ body {
     margin-bottom: 10px;
 }
 
-
-#volume-btn:hover + #volumeSlider {
-	width: auto;
-}
-
-
-
-/**
- * Volume-Slider
- */
 #volumeSlider {
-	width: 0;
-	transition: width .5s;
-}
-
-#volumeSlider:hover #volumeSlider {
-	display: inline-block;
+    width: 75px;
+    margin: 0;
+    cursor: pointer;
 }
 
 #trackbar {
@@ -98,7 +85,10 @@ body {
     -moz-user-select: none;
 }
 
-
+#progress {
+    width: 100%;
+    margin: 0;
+}
 
 #player {
     display: none;
@@ -155,12 +145,6 @@ body {
 #error.show {
     display: block;
 }
-
-#progress-container {
-    margin: 0;
-    width: 100%;
-}
-
 
 /**
  * Preloader
