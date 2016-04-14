@@ -5,6 +5,6 @@ The current dev version can be tested on:
 [dev.severinkaderli.ch/player](https://dev.severinkaderli.ch/player)
 
 ##TODO
-* Working volume Slider in GUI.
+* Keyboard-Shortcut for mute/unMute -> M-Key most likely.
 * Settings (Notifications, Thumbnail etc...)
 * List of keyboard shortcuts
