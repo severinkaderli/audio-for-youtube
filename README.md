@@ -6,5 +6,5 @@ The current dev version can be tested on:
 
 ##TODO
 * M-Key for mute/unmute.
-* Settings (Notifications, Thumbnail etc...)
-* List of keyboard shortcuts
+* Settings (Maybe for notifications and thumbnails...)
+* List of keyboard shortcuts -> in same Screen as settings?
