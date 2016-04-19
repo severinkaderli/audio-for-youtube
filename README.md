@@ -7,4 +7,5 @@ The current dev version can be tested on:
 ##TODO
 * M-Key for mute/unmute.
 * Settings (Maybe for notifications and thumbnails...)
+* Support for very small devices (320px) because of volume slider.
 * List of keyboard shortcuts -> in same Screen as settings?
