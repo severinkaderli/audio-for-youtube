@@ -7,6 +7,6 @@ The current dev version can be tested on:
 ##TODO
 * Fix playing on mobile devices (Try to play, if state is not playing, stop)
 * M-Key for mute/unmute.
-* Settings (Maybe for notifications and thumbnails...)
 * Support for very small devices (320px) because of volume slider.
+* Settings (Maybe for notifications and thumbnails...)
 * List of keyboard shortcuts -> in same Screen as settings?
