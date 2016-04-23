@@ -6,7 +6,7 @@ The current developement version can be tested on:
 
 ##TODO
 * Adding linting of code in gulp.js using eslint
-* Better README.md (Installation instructions)
+* Better README.md (Installation)
 * Fix playing on mobile devices (Try to play, if state is not playing, stop)
 * M-Key for mute/unmute.
 * Support for very small devices (320px) because of volume slider.
