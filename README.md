@@ -11,4 +11,3 @@ The current developement version can be tested on:
 * M-Key for mute/unmute.
 * Support for very small devices (320px) because of volume slider.
 * List of keyboard shortcuts -> by Pressing ? and in readme
-* footer on the site
