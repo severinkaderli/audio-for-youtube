@@ -34,6 +34,7 @@ const Player = {
     activeKeys: {},
     /**
      * The last set volume. This is used for unmuting.
+     * 
      * @type {Number}
      */
     lastVolume: 100,
@@ -314,8 +315,8 @@ const Player = {
      * @return {void}
      */
     keydown: function(event) {
-        // Only execute the keycommand when to key is not active. This is
-        // to prevent spamming of keys.
+        // Only execute the key command when to key is not active. This is
+        // used to prevent spamming of keys.
         if (Player.activeKeys[event.keyCode] == null) {
             switch (event.keyCode) {
                 case 37:
@@ -328,6 +329,9 @@ const Player = {
                     break;
                 case 32:
                     Player.changeVideoState();
+                    break;
+                case 77:
+                    Player.changeMuteState();
                     break;
             }
             Player.activeKeys[event.keyCode] = true;
