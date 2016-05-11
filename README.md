@@ -7,5 +7,4 @@ The current developement version can be tested on:
 ##TODO
 * Adding linting of code in gulp.js using eslint
 * Fix playing on mobile devices (Try to play, if state is not playing, stop)
-* Support for very small devices (320px) because of volume slider.
 * List of keyboard shortcuts -> by Pressing ? and in readme
