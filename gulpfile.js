@@ -13,7 +13,7 @@ gulp.task('js', function () {
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError())
-        //.pipe(uglify())
+        //.pipe(uglify().on("error", console.log))
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('js/'));
 });

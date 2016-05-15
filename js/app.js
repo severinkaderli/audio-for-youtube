@@ -46,7 +46,7 @@ const Player = {
     elements: {
         gui: document.getElementById("gui"),
         title: document.getElementById("title"),
-        siteTitle: document.getElementsByTagName('title')[0],
+        siteTitle: document.getElementsByTagName("title")[0],
         time: document.getElementById("currentTime"),
         duration: document.getElementById("duration"),
         progress: document.getElementById("progress"),
@@ -68,11 +68,11 @@ const Player = {
      */
     loadPlayer: function() {
         if(Player.clearPlayer()) {
-            Player.YTPlayer = new YT.Player('player', {
+            Player.YTPlayer = new YT.Player("player", {
                 events: {
-                    'onReady': Player.onReady,
-                    'onError': Player.onError,
-                    'onStateChange': Player.onStateChange
+                    "onReady": Player.onReady,
+                    "onError": Player.onError,
+                    "onStateChange": Player.onStateChange
                 }
             }); 
         } 
@@ -90,10 +90,10 @@ const Player = {
 
         // Removing event listener
         Player.elements.controls.play.removeEventListener("click", Player.changeVideoState);
-        Player.elements.controls.prev.removeEventListener('click', Player.playPrevious);
-        Player.elements.controls.next.removeEventListener('click', Player.playNext);
-        Player.elements.controls.volumeBtn.removeEventListener('click', Player.changeMuteState);
-        Player.elements.controls.volumeSlider.removeEventListener('input', Player.updateVolume);
+        Player.elements.controls.prev.removeEventListener("click", Player.playPrevious);
+        Player.elements.controls.next.removeEventListener("click", Player.playNext);
+        Player.elements.controls.volumeBtn.removeEventListener("click", Player.changeMuteState);
+        Player.elements.controls.volumeSlider.removeEventListener("input", Player.updateVolume);
 
         // Removing keyboard listener
         window.addEventListener("keydown", Player.keydown, false);
@@ -130,7 +130,7 @@ const Player = {
         }
 
         // Add the iframe to the DOM.
-        iframe.src = 'https://www.youtube.com/embed/videoseries?list=' + playlistId + '&autoplay=1&enablejsapi=1';
+        iframe.src = "https://www.youtube.com/embed/videoseries?list=" + playlistId + "&autoplay=1&enablejsapi=1";
         body.appendChild(iframe);
 
         return true; 
@@ -160,10 +160,10 @@ const Player = {
 
         // Add event listeners for the GUI
         Player.elements.controls.play.addEventListener("click", Player.changeVideoState);
-        Player.elements.controls.prev.addEventListener('click', Player.playPrevious);
-        Player.elements.controls.next.addEventListener('click', Player.playNext);
-        Player.elements.controls.volumeBtn.addEventListener('click', Player.changeMuteState);
-        Player.elements.controls.volumeSlider.addEventListener('input', Player.updateVolume);
+        Player.elements.controls.prev.addEventListener("click", Player.playPrevious);
+        Player.elements.controls.next.addEventListener("click", Player.playNext);
+        Player.elements.controls.volumeBtn.addEventListener("click", Player.changeMuteState);
+        Player.elements.controls.volumeSlider.addEventListener("input", Player.updateVolume);
 
         // Add keyboard listener
         window.addEventListener("keydown", Player.keydown, false);
@@ -230,7 +230,7 @@ const Player = {
 
             // Close the notification automatically after 5 seconds
             setTimeout(function() {
-                notification.close()
+                notification.close();
             }, 5000);
 
             Player.videoHasEnded = false;
@@ -419,10 +419,9 @@ const Player = {
     /**
      * Switch between mute and unmute.
      * 
-     * @param  {object} event - The event object.
      * @return {void}
      */
-    changeMuteState: function(event) {
+    changeMuteState: function() {
         if(Player.YTPlayer.isMuted()) {
             Player.unMute();
         } else {
@@ -452,7 +451,7 @@ const Player = {
         Player.elements.controls.volumeBtn.innerText = "volume_up";
         Player.YTPlayer.unMute();
         if(setVolume) {
-           Player.setVolume(Player.lastVolume); 
+            Player.setVolume(Player.lastVolume); 
         }   
     },
     /**
@@ -492,7 +491,7 @@ const Player = {
         seconds = Math.floor(seconds);
         let minutes = Math.floor(seconds / 60);
         seconds = seconds - minutes * 60;
-        return Player.str_pad_left(minutes, "0", 2) + ':' + Player.str_pad_left(seconds, "0", 2);
+        return Player.str_pad_left(minutes, "0", 2) + ":" + Player.str_pad_left(seconds, "0", 2);
     },
     /**
      * Gets the value of a specific parameter from an url.
