@@ -1,8 +1,7 @@
 var gulp = require("gulp"),
 	sass = require('gulp-sass'),
     cssnano = require('gulp-cssnano'),
-	babel = require("gulp-babel"),
-	jshint = require("gulp-jshint"),
+	eslint = require('gulp-eslint'),
 	rename = require("gulp-rename"),
 	uglify = require("gulp-uglify");
 
@@ -11,13 +10,15 @@ var gulp = require("gulp"),
  */
 gulp.task('js', function () {
     return gulp.src('js/app.js')
-        .pipe(babel())
-        .pipe(uglify())
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError())
+        //.pipe(uglify())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('js/'));
 });
 
-gulp.task('sass', function() {
+gulp.task('css', function() {
     return gulp.src('css/app.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(cssnano())
@@ -28,4 +29,4 @@ gulp.task('sass', function() {
 /**
  * Default task
  */
-gulp.task('default', ['js']);
+gulp.task('default', ['js', 'css']);

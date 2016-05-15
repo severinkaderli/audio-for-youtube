@@ -177,6 +177,7 @@ const Player = {
         // stop it again. This is to prevent GUI problems on most mobile
         // browsers.
         Player.play(); 
+        console.log(Player.YTPlayer.getPlayerState());
         if(Player.YTPlayer.getPlayerState() != YT.PlayerState.PLAYING) {
             Player.pause();
         }
