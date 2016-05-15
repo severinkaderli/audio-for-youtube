@@ -173,9 +173,13 @@ const Player = {
         Player.updateTimeInterval = setInterval(Player.updateTime, 500);
         Player.updateMetaInterval = setInterval(Player.updateMeta, 500);
 
-        // TODO: Try to play the video. If it can't be played it should be
-        // stopped again.
+        // We try to automatically start the video. If it doesn't work we
+        // stop it again. This is to prevent GUI problems on most mobile
+        // browsers.
         Player.play(); 
+        if(Player.YTPlayer.getPlayerState() != YT.PlayerState.PLAYING) {
+            Player.pause();
+        }
     },
     /**
      * Gets fired when an error occurs.

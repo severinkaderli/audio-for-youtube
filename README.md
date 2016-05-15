@@ -6,4 +6,4 @@ The current developement version can be tested on:
 
 ##TODO
 * Adding linting of code in gulp.js using eslint
-* Fix playing on mobile devices (Try to play, if state is not playing then stop).
+* Adding nice looking material design progress bar
