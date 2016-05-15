@@ -191,10 +191,17 @@ const Player = {
         const errorCode = event.data;
 
         switch(errorCode) {
+
+            // The video is private or it is deleted.
+            case 100:
+            // The uploader doesn't allow the playback in embedded players.
+            case 101:
             case 150:
-                Player.showError("This playlist is private or doesn't exist.");
+                Player.playNext();
+                break;
+            default:
+                console.error("The YouTube Player returned an Error-Code: " + errorCode);
         }
-        console.error("The YouTube Player returned an Error-Code: " + errorCode);
     },
     /**
      * Gets called when the state of the player gets changed.
