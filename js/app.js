@@ -178,7 +178,7 @@ const Player = {
         // browsers.
         Player.play(); 
         console.log(Player.YTPlayer.getPlayerState());
-        if(Player.YTPlayer.getPlayerState() != YT.PlayerState.PLAYING) {
+        if(Player.YTPlayer.getPlayerState() != YT.PlayerState.BUFFERING) {
             Player.pause();
         }
     },
