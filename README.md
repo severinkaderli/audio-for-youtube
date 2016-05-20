@@ -6,5 +6,5 @@ The current developement version can be tested on:
 
 ##TODO
 * Adding nice looking material design progress bar
-* Error handling for non existing playlists. (not sure how to solve this right now...)
+* Error handling for non existing playlists. (Checking for error code on GET-Request?)
 * CSS Cleanup (right now it's a mess.)
