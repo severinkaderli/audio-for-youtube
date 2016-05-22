@@ -5,6 +5,6 @@ The current developement version can be tested on:
 [dev.severinkaderli.ch/player](https://dev.severinkaderli.ch/player)
 
 ##TODO
-* Adding nice looking material design progress bar
+* Adding nice looking material design progress bar (Browser-compatibility?)
 * Error handling for non existing playlists. (Checking for error code on GET-Request)
 * CSS Cleanup (right now it's a mess.)
