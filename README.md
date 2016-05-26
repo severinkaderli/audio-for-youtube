@@ -8,3 +8,4 @@ The current developement version can be tested on:
 * Adding nice looking material design progress bar
 * Error handling for non existing playlists.
 * CSS Cleanup
+* Finally finish this project!
