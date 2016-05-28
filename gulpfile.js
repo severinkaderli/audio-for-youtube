@@ -1,6 +1,6 @@
 var gulp = require("gulp"),
 	sass = require('gulp-sass'),
-    cssnano = require('gulp-cssnano'),
+    	cssnano = require('gulp-cssnano'),
 	eslint = require('gulp-eslint'),
 	rename = require("gulp-rename"),
 	uglify = require("gulp-uglify");
