@@ -6,5 +6,5 @@ The current version can be used on:
 
 ##TODO
 * Adding nice looking material design progress bar
-* Error handling for non existing playlists.
+* Error handling for non-existing playlists. (Using a GET-Request and check the HTTP-Code)
 * CSS Cleanup
